@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
+        <file>images/Figure_1.png</file>
+        <file>images/metacpan.ico</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,106 @@
+import QtQuick
+import QtQuick.Controls
+import QtCharts
+
+Item {
+    id: rectangle1
+    implicitWidth: 640
+    implicitHeight: 480
+    property real chartr: 0.8
+    property real buttnr: 0.2
+    property real dialr: 0.3
+    Connections {// Component.onCompleted: {
+        //     chartndial.implicitHeight = target.height * target.chartr
+        //     buttnpad.implicitHeight = target.height * target.buttnr
+        //     dials.implicitWidth = target.width * target.dialr
+        // }
+        // // function onWidthChanged() {
+        // //     dials.implicitWidth = rectangle1.width * rectangle1.dialr
+        // //     chartv.implicitWidth = rectangle1.width - dials.implicitWidth
+        // // }
+        // function onHeightChanged() {
+        //     chartndial.implicitHeight = rectangle1.height * rectangle1.chartr
+        //     buttnpad.implicitHeight = rectangle1.height * rectangle1.buttnr
+        //     console.log(rectangle1.chartr)
+        // }
+    }
+    SplitView {
+        id: splitView
+        anchors.fill: parent
+        orientation: "Vertical"
+        handle: Item {
+            id: handleDelegate
+            implicitWidth: 0
+            implicitHeight: 0
+            containmentMask: Item {
+                y: -height / 2
+                height: 6
+                width: splitView.width
+            }
+        }
+        Rectangle {
+            id: chartndial
+            color: "#eeeeee"
+            SplitView.preferredHeight: 400
+            // SplitView {
+            //     id: hsplitView
+            //     anchors.fill: parent
+            //     handle: Item {
+            //         id: hhandleDelegate
+            //         implicitWidth: 0
+            //         implicitHeight: 0
+            //         containmentMask: Item {
+            //             x: -width / 2
+            //             width: 6
+            //             height: splitView.height
+            //         }
+            //     }
+            //     Rectangle {
+            //         id: dials
+            //         color: "#0000ff"
+            //         SplitView.preferredWidth: 100
+            //     }
+            //     Item {
+            //         SplitView.preferredWidth: 100
+            //         ChartView {
+            //             anchors.fill:parent
+            //             dropShadowEnabled: false
+            //             id: chartv
+            //             LineSeries {
+            //                 name: "LineSeries"
+            //                 XYPoint {
+            //                     x: 0
+            //                     y: 2
+            //                 }
+
+            //                 XYPoint {
+            //                     x: 1
+            //                     y: 1.2
+            //                 }
+
+            //                 XYPoint {
+            //                     x: 2
+            //                     y: 3.3
+            //                 }
+
+            //                 XYPoint {
+            //                     x: 5
+            //                     y: 2.1
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+        }
+        Rectangle {
+            id: buttnpad
+            color: "#555555"
+            SplitView.preferredHeight: 10
+        }
+        Connections {// function onResizingChanged() {
+            //     rectangle1.chartr = chartndial.height / rectangle1.height
+            //     rectangle1.buttnr = chartndial.height / rectangle1.height
+            // }
+        }
+    }
+}
