@@ -1,8 +1,0 @@
-module CTsoftware
-typeinfo CTsoftware.qmltypes
-prefer :/qt/qml/CTsoftware/
-Main 254.0 Main.qml
-MScreen 254.0 MScreen.ui.qml
-MDial 254.0 MDial.qml
-depends QtQuick
-

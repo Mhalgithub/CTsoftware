@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/">
-    <file alias="qtquickcontrols2.conf">D:/CT/Application/CTsoftware/qtquickcontrols2.conf</file>
-    <file alias="images/metacpan.ico">D:/CT/Application/CTsoftware/images/metacpan.ico</file>
-    <file alias="images/Figure_1.png">D:/CT/Application/CTsoftware/images/Figure_1.png</file>
-    <file alias="images/CTsoftware.ico">D:/CT/Application/CTsoftware/images/CTsoftware.ico</file>
-  </qresource>
-</RCC>
-
