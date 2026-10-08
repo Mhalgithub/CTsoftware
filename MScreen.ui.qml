@@ -10,6 +10,8 @@ Rectangle {
     id: rectangle1
     implicitWidth: 640
     implicitHeight: 480
+    // width: 640
+    // height: 480
     // property real chartr: 0.8
     // property real dialr: 0.3
     Connections {
@@ -217,7 +219,7 @@ Rectangle {
                         id: dataseriess
                         model: 10
                         delegate: LineSeries {
-                            selectable : true
+                            selectable: true
                             XYPoint {
                                 x: 2
                                 y: 2
@@ -340,14 +342,13 @@ Rectangle {
                     id: aA
                     text: qsTr("Anti aliasing")
                     Connections {
-                        function onPressed() {
-                            console.log("data thread:" + Datalink.pthread())
-                            console.log("gui thread:" + rectangle1.thread)
+                        function onPressed() {// console.log("data thread:" + Datalink.pthread())
+                            // console.log("gui thread:" + rectangle1.thread)
                             // chartv.text = Datalink.showserials()
                             // dial.children[0].children[0].transform[1].angle += -10
                             // awd.append(4.5, 0)
-                            awd.replace(4, Qt.point(5, dial.value))
-                            chartv.update()
+                            // awd.replace(4, Qt.point(5, dial.value))
+                            // chartv.update()
                             // awd.replace(5, 5, dial.value)
                             // for (var i = 0; i < 256; i++) {
                             //     Datalink.write(String.fromCharCode(i))
@@ -390,9 +391,13 @@ Rectangle {
                     // }
                 }
 
-                CheckBox {
+                Slider {
                     id: interpolate
-                    text: qsTr("Interpolate")
+                    from : 5
+                    to : 20
+                    stepSize: 15
+                    snapMode: "SnapOnRelease"
+                    //text: qsTr("Interpolate")
                     ToolTip.visible: hovered ? true : false
                     ToolTip.text: "hello"
                     ToolTip.delay: 500

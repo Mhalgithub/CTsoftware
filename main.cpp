@@ -1,10 +1,36 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include "Datalink.h"
+#include "simplehdlc.h"
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
 #include <QQuickWindow>
+struct RxData {
+    uint8_t buffer[200];
+    size_t len;
+};
+void rx_packet_callback(const uint8_t *payload, uint16_t len, void *user_ptr)
+{
+    RxData *rx = static_cast<RxData *>(user_ptr);
+
+    rx->len = len;
+
+    for (size_t i = 0; i < len; i++) {
+        rx->buffer[i] = payload[i];
+    }
+
+    qDebug() << "Received packet, length =" << len;
+
+    char text[1000] = {0};
+    int pos = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        pos += sprintf(text + pos, "%02X ", payload[i]);
+    }
+
+    qDebug() << text;
+}
 
 int main(int argc, char *argv[])
 
@@ -53,5 +79,62 @@ int main(int argc, char *argv[])
     });
     QLineSeries *a=new QLineSeries();
     a->replace(*pl);
+    uint8_t o[200] = {0};
+
+    uint8_t x = 199;
+
+    size_t encoded_size;
+
+    simplehdlc_encode_to_buffer(
+        o,
+        sizeof(o),
+        &encoded_size,
+        &x,
+        1
+        );
+
+    qDebug() << "Encoded size =" << encoded_size;
+
+    char encoded_text[1000] = {0};
+    int pos = 0;
+
+    for (size_t i = 0; i < encoded_size; i++) {
+        pos += sprintf(encoded_text + pos, "%02X ", o[i]);
+    }
+
+    qDebug() << "Encoded:" << encoded_text;
+
+
+    // -------------------------------
+    // Receiver
+    // -------------------------------
+
+    uint8_t parse_buffer[200];
+
+    RxData received = {};
+
+    simplehdlc_callbacks_t callbacks = {};
+    callbacks.rx_packet_callback = rx_packet_callback;
+
+    simplehdlc_context_t receiver;
+
+    simplehdlc_init(
+        &receiver,
+        parse_buffer,
+        sizeof(parse_buffer),
+        &callbacks,
+        &received
+        );
+
+
+    // Feed the encoded packet to the receiver
+    simplehdlc_parse(
+        &receiver,
+        o,
+        encoded_size
+        );
+
+
     return app.exec();
 }
+

@@ -18,6 +18,8 @@ private :
     QSerialPort *qs;
     QByteArray *mem;
 public:
+    enum polarity {positive,negative,bipolar};
+    enum devtype {current,voltage};
     QList<QList<QPointF>>* series();
     explicit Datalink (QObject *parent=nullptr);
     ~Datalink();
@@ -35,6 +37,10 @@ public slots :
     QByteArray read(int n);
     void pthread();
     void getinput();
+    void getinputold();
+    void handleinput(QByteArray input);
+    void changev(float nv,polarity pol);
+    void changei(float ni,polarity pol,devtype type);
 
 };
 #endif

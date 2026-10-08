@@ -4,10 +4,11 @@
 #include <QSerialPortInfo>
 #include <QThreadPool>
 #include <QtMath>
+#include "simplehdlc.h"
 // #include <QMessageBox>
 // #include <QTextStream>
 Datalink::Datalink(QObject *parent)
-    : QObject{parent} , km(0),qs(),mseries(new QList<QList<QPointF>>(10)),mem(new QByteArray()){
+    : QObject{parent} , km(0),qs(new QSerialPort(this)),mseries(new QList<QList<QPointF>>(10)),mem(new QByteArray()){
     (*mseries)[0]=QList<QPointF>(10);
     for (int i=0;i<10;i++){
         (*mseries)[i]=QList<QPointF>(100);
@@ -38,11 +39,32 @@ Datalink::~Datalink(){
     delete qs;
 }
 int Datalink::intializeserial(){
-    qs = new QSerialPort();
+    // qs = new QSerialPort();
+    const auto serialPortInfos = QSerialPortInfo::availablePorts();
+    for (int i=0;i<serialPortInfos.count();i++) {
+        const auto &portInfo=serialPortInfos[i];
+        qDebug() << "\n"
+                 << "Port:" << portInfo.portName() << "\n"
+                 << "Location:" << portInfo.systemLocation() << "\n"
+                 << "Description:" << portInfo.description() << "\n"
+                 << "Manufacturer:" << portInfo.manufacturer() << "\n"
+                 << "Serial number:" << portInfo.serialNumber() << "\n"
+                 << "Vendor Identifier:"
+                 << (portInfo.hasVendorIdentifier()
+                         ? QByteArray::number(portInfo.vendorIdentifier(), 16)
+                         : QByteArray()) << "\n"
+                 << "Product Identifier:"
+                 << (portInfo.hasProductIdentifier()
+                         ? QByteArray::number(portInfo.productIdentifier(), 16)
+                         : QByteArray())<<"\n" << "System location : " << portInfo.systemLocation();
+    }
+
     // qs->setPort(QSerialPortInfo("\\\\.\\CNCA0"));
-    qs->setPortName("\\\\.\\CNCA0");
+    // qs->setPortName(serialPortInfos[1].portName());
+    qs->setPortName("\\\\.\\COM3");
+
     // qDebug()<<QSerialPortInfo("\\\\.\\CNCA0").portName();
-    qs->setBaudRate(9600);
+    qs->setBaudRate(57600);
     qs->setStopBits(QSerialPort::OneStop);
     qs->setDataBits(QSerialPort::Data8);
     qs->setParity(QSerialPort::NoParity);
@@ -67,7 +89,7 @@ QList<QList<QPointF>> *Datalink::series(){
 QList<QPointF> Datalink::getseries(int i){
     return (*mseries)[i];
 }
-void Datalink::getinput(){
+void Datalink::getinputold(){
     QByteArray a,temp;
     // qDebug()<<"temp: "<<temp;
     a.append(*mem);
@@ -106,4 +128,36 @@ void Datalink::getinput(){
     mem->append(temp);
     }
 // qDebug()<<(*mem);
+}
+void Datalink::getinput(){
+    QByteArray temp;
+    temp.append(*mem);
+    mem->clear();
+    temp.append(qs->readAll());
+    QList<QByteArray> chunks = temp.split(-1);
+    for (int i = 1; i < chunks.size() - 1; ++i)
+    {
+        const QByteArray &chunk = chunks[i];
+
+        handleinput(chunk);
+    }
+    mem->append(-1);
+    mem->append(chunks.last());
+}
+void Datalink::handleinput(QByteArray input)
+{
+    //qDebug()<<input.size();
+    int series,len;//series for series index and len for length of data points
+    series=input.at(0);
+    len=input.size()/2;
+    (*mseries)[series].resizeForOverwrite(len);//clearing or resizing for data
+    for(int j=0;j<len;++j){//new data point by point
+    (*mseries)[series][j]=QPointF(static_cast<unsigned char>(input[2*j+1]),(unsigned char)(input[2*j+2]));
+    }
+}
+void Datalink::changev(float nv,polarity pol){
+
+}
+void Datalink::changei(float ni,polarity pol, devtype type){
+
 }

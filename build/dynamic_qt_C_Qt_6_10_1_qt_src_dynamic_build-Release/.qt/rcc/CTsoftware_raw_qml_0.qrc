@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/qt/qml/CTsoftware/">
+    <file alias="Main.qml">D:/CT/Application/CTsoftware/Main.qml</file>
+    <file alias="MScreen.ui.qml">D:/CT/Application/CTsoftware/MScreen.ui.qml</file>
+    <file alias="MDial.qml">D:/CT/Application/CTsoftware/MDial.qml</file>
+  </qresource>
+</RCC>
+

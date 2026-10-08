@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 option(LINK_INSIGHT "Link Qt Insight Tracker library" ON)
 option(BUILD_QDS_COMPONENTS "Build design studio components" ON)
 
-project(CTsoftware VERSION 0.1 LANGUAGES CXX)
+project(CTsoftware VERSION 0.1 LANGUAGES CXX C)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -15,9 +15,11 @@ qt_standard_project_setup(REQUIRES 6.8)
 qt_add_executable(${CMAKE_PROJECT_NAME}
     CTsoftware.qrc
     main.cpp
+    simplehdlc.c
+    simplehdlc_crc32.c
+    Datalink.cpp
     ${app_icon_resource_windows}
     #[[
-    Datalink.cpp
     Datalink.h]]
 )
 
@@ -42,6 +44,10 @@ qt_add_qml_module(${CMAKE_PROJECT_NAME}
     SOURCES
         Datalink.cpp
         Datalink.h
+        simplehdlc.h
+        simplehdlc.c
+        simplehdlc_crc32.c
+        simplehdlc_crc32.h
     RESOURCES
         images/Figure_1.png
         RESOURCES icon.rc
@@ -74,7 +80,7 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE FALSE
+    WIN32_EXECUTABLE TRUE
 )
 
 target_link_libraries(${CMAKE_PROJECT_NAME}

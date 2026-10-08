@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/qt/qml/CTsoftware/">
+    <file alias="images/Figure_1.png">D:/CT/Application/CTsoftware/images/Figure_1.png</file>
+    <file alias="icon.rc">D:/CT/Application/CTsoftware/icon.rc</file>
+    <file alias="images/metacpan.ico">D:/CT/Application/CTsoftware/images/metacpan.ico</file>
+  </qresource>
+</RCC>
+

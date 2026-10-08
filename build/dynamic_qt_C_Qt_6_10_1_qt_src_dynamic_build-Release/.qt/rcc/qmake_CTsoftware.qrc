@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/CTsoftware">
+    <file alias="qmldir">D:/CT/Application/CTsoftware/build/dynamic_qt_C_Qt_6_10_1_qt_src_dynamic_build-Release/CTsoftware/qmldir</file>
+  </qresource>
+</RCC>
+
