@@ -61,16 +61,16 @@ int Datalink::intializeserial(){
 
     // qs->setPort(QSerialPortInfo("\\\\.\\CNCA0"));
     // qs->setPortName(serialPortInfos[1].portName());
-    qs->setPortName("\\\\.\\COM3");
+    qs->setPortName("\\\\.\\CNCA0");
 
     // qDebug()<<QSerialPortInfo("\\\\.\\CNCA0").portName();
-    qs->setBaudRate(57600);
+    qs->setBaudRate(9600);
     qs->setStopBits(QSerialPort::OneStop);
     qs->setDataBits(QSerialPort::Data8);
     qs->setParity(QSerialPort::NoParity);
     qs->setFlowControl(QSerialPort::NoFlowControl);
     qs->open(QIODeviceBase::ReadWrite);
-    qs->write("hello");
+    //qs->write("hello");
     return qs->error();
 }
 void Datalink::write(QString text){
@@ -139,17 +139,18 @@ void Datalink::getinput(){
     {
         const QByteArray &chunk = chunks[i];
 
-        handleinput(chunk);
+        if(!chunk.isEmpty())handleinput(chunk);
     }
     mem->append(-1);
     mem->append(chunks.last());
 }
-void Datalink::handleinput(QByteArray input)
+void Datalink::handleinput(const QByteArray &input)
 {
     //qDebug()<<input.size();
     int series,len;//series for series index and len for length of data points
     series=input.at(0);
-    len=input.size()/2;
+    if(series>7)return;
+    len=(input.size()-1)/2;
     (*mseries)[series].resizeForOverwrite(len);//clearing or resizing for data
     for(int j=0;j<len;++j){//new data point by point
     (*mseries)[series][j]=QPointF(static_cast<unsigned char>(input[2*j+1]),(unsigned char)(input[2*j+2]));
@@ -159,5 +160,6 @@ void Datalink::changev(float nv,polarity pol){
 
 }
 void Datalink::changei(float ni,polarity pol, devtype type){
-
+    unsigned char tosend[]={2,static_cast<unsigned char>(ni-1)};
+    qs->write(reinterpret_cast<char *>(tosend),sizeof(tosend));
 }

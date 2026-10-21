@@ -6,6 +6,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QQuickWindow>
+#include <bitset>
 struct RxData {
     uint8_t buffer[200];
     size_t len;
@@ -84,7 +85,9 @@ int main(int argc, char *argv[])
     uint8_t x = 199;
 
     size_t encoded_size;
-
+    qDebug() << QString::fromStdString(
+        std::bitset<8>(static_cast<unsigned char>(128u)).to_string()
+        );
     simplehdlc_encode_to_buffer(
         o,
         sizeof(o),

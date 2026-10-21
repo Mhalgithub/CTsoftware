@@ -38,7 +38,7 @@ public slots :
     void pthread();
     void getinput();
     void getinputold();
-    void handleinput(QByteArray input);
+    void handleinput(const QByteArray &input);
     void changev(float nv,polarity pol);
     void changei(float ni,polarity pol,devtype type);
 

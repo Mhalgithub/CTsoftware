@@ -10,8 +10,9 @@ Rectangle {
     id: rectangle1
     implicitWidth: 640
     implicitHeight: 480
-    // width: 640
-    // height: 480
+    width: 640
+    height: 480
+    // visible: false
     // property real chartr: 0.8
     // property real dialr: 0.3
     Connections {
@@ -126,8 +127,8 @@ Rectangle {
                             ToolTip.text: "hello"
                             ToolTip.delay: 500
                             dtext: "V range"
-                            from: 1
-                            to: 4
+                            from: 0
+                            to: 3
                             model: [1, 5, 10, 20]
                         }
 
@@ -145,6 +146,18 @@ Rectangle {
                             ToolTip.visible: hovered ? true : false
                             ToolTip.text: "hello"
                             ToolTip.delay: 500
+                            from: 0
+                            to: 4
+                            model: [1, 16, 64, 128, 256]
+                            Connections {
+                                function onValueChanged() {
+                                    for (var i = 0; i < 10; i++) {
+                                        dataseriess.objectAt(i).clear()
+                                    }
+                                    Datalink.changei(target.model[dial1.value],
+                                                     0, 0)
+                                }
+                            }
                         }
 
                         MDial {
@@ -220,10 +233,6 @@ Rectangle {
                         model: 10
                         delegate: LineSeries {
                             selectable: true
-                            XYPoint {
-                                x: 2
-                                y: 2
-                            }
                         }
                     }
                 }
@@ -393,8 +402,8 @@ Rectangle {
 
                 Slider {
                     id: interpolate
-                    from : 5
-                    to : 20
+                    from: 5
+                    to: 20
                     stepSize: 15
                     snapMode: "SnapOnRelease"
                     //text: qsTr("Interpolate")
