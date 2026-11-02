@@ -5,6 +5,9 @@
 #include <QThreadPool>
 #include <QtMath>
 #include "simplehdlc.h"
+
+#define LEGACY_INPUT 0
+
 // #include <QMessageBox>
 // #include <QTextStream>
 Datalink::Datalink(QObject *parent)
@@ -61,7 +64,7 @@ int Datalink::intializeserial(){
 
     // qs->setPort(QSerialPortInfo("\\\\.\\CNCA0"));
     // qs->setPortName(serialPortInfos[1].portName());
-    qs->setPortName("\\\\.\\CNCA0");
+    qs->setPortName("\\\\.\\COM3");
 
     // qDebug()<<QSerialPortInfo("\\\\.\\CNCA0").portName();
     qs->setBaudRate(9600);
@@ -134,7 +137,11 @@ void Datalink::getinput(){
     temp.append(*mem);
     mem->clear();
     temp.append(qs->readAll());
+#if LEGACY_INPUT
     QList<QByteArray> chunks = temp.split(-1);
+#else
+QList<QByteArray> chunks = temp.split('\n');
+#endif
     for (int i = 1; i < chunks.size() - 1; ++i)
     {
         const QByteArray &chunk = chunks[i];
@@ -147,6 +154,7 @@ void Datalink::getinput(){
 void Datalink::handleinput(const QByteArray &input)
 {
     //qDebug()<<input.size();
+#if LEGACY_INPUT
     int series,len;//series for series index and len for length of data points
     series=input.at(0);
     if(series>7)return;
@@ -155,6 +163,23 @@ void Datalink::handleinput(const QByteArray &input)
     for(int j=0;j<len;++j){//new data point by point
     (*mseries)[series][j]=QPointF(static_cast<unsigned char>(input[2*j+1]),(unsigned char)(input[2*j+2]));
     }
+#else
+    static int ind=0,series=0;
+    uint32_t adcAvg, dacValue;
+    if(input.at(0)!='S'){
+    sscanf(input.constData(), "%lu\t,%lu", (unsigned long *)&adcAvg, (unsigned long *)&dacValue);
+        if(ind>(*mseries)[series].size()){
+        (*mseries)[series].resizeForOverwrite(ind);//clearing or resizing for data
+        }
+        (*mseries)[series][ind]=QPointF(adcAvg,ind++);
+    }
+    else{
+        sscanf(input.constData(), "Series %d", &series);
+        (*mseries)[series].clear();
+        (*mseries)[series].resizeForOverwrite(512);
+        ind=0;
+    }
+#endif
 }
 void Datalink::changev(float nv,polarity pol){
 
@@ -162,4 +187,8 @@ void Datalink::changev(float nv,polarity pol){
 void Datalink::changei(float ni,polarity pol, devtype type){
     unsigned char tosend[]={2,static_cast<unsigned char>(ni-1)};
     qs->write(reinterpret_cast<char *>(tosend),sizeof(tosend));
+
+}
+void Datalink::serialclear(){
+    qs->clear();
 }

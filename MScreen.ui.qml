@@ -156,6 +156,7 @@ Rectangle {
                                     }
                                     Datalink.changei(target.model[dial1.value],
                                                      0, 0)
+                                    // Datalink.serialclear()
                                 }
                             }
                         }

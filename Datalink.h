@@ -41,6 +41,7 @@ public slots :
     void handleinput(const QByteArray &input);
     void changev(float nv,polarity pol);
     void changei(float ni,polarity pol,devtype type);
+    void serialclear();
 
 };
 #endif
