@@ -171,7 +171,7 @@ void Datalink::handleinput(const QByteArray &input)
         if(ind>(*mseries)[series].size()){
         (*mseries)[series].resizeForOverwrite(ind);//clearing or resizing for data
         }
-        (*mseries)[series][ind]=QPointF(adcAvg,ind++);
+        (*mseries)[series][ind]=QPointF(ind++,adcAvg);
     }
     else{
         sscanf(input.constData(), "Series %d", &series);
